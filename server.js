@@ -9,7 +9,7 @@ const s3Router = require('./routes/s3Router')
 const rdsRouter = require('./routes/rdsRouter')
 
 const app = express();
-const port = 3002;
+const port = 9090;
 
 app.use(morgan('tiny'));
 app.use(cors());
