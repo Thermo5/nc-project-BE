@@ -52,4 +52,36 @@ s3Router.get('/textstorage', (req, res) => {
 		})
 })
 
+s3Router.get('/sign', (req, res) => {
+	const filename = req.query.objectName;
+    const mimeType = 'audio/webm';
+    const ext = '.webm';
+    const fileKey = filename + ext;
+
+    const params = {
+			Bucket: rawAudioBucket,
+      Key: fileKey,
+      Expires: 6000,
+      ContentType: mimeType,
+      ACL: 'public-read' // || 'private'
+    };
+
+		console.log('Get signed url params', params)
+
+	// Getting pre-signed url - no actual data is being passed here
+    s3.getSignedUrl('putObject', params, function(err, url) {
+      if (err) {
+        console.log(err);
+        return res.send(500, "Cannot create S3 signed URL");
+      }
+
+      console.log('url: ', url)
+      res.json({
+        signedUrl: url,
+        publicUrl: 'https://s3.amazonaws.com/'+ params.Bucket + '/' + params.Key,
+        filename: filename
+      });
+    });
+})
+
 module.exports = s3Router;
