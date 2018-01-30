@@ -7,6 +7,11 @@ const textBucket = 'textstorage-northcoders';
 const rawAudioBucket = 'rawaudiostorage-northcoders';
 const mp3AudioBucket = 'mp3audiostorage-northcoders';
 const aws = require('aws-sdk');
+
+const { accessKeyId, secretAccessKey, region } = require('../config')
+aws.config.region = region;
+aws.config.credentials = { accessKeyId, secretAccessKey }
+
 const s3 = new aws.S3();
 const mysql = require('promise-mysql');
 const SQL = require('sql-template-strings');

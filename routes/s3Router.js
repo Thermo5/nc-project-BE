@@ -2,6 +2,11 @@ const express = require('express');
 const s3Router = express.Router();
 
 const aws = require('aws-sdk');
+
+const { accessKeyId, secretAccessKey, region } = require('../config')
+aws.config.region = region;
+aws.config.credentials = { accessKeyId, secretAccessKey }
+
 const s3 = new aws.S3();
 const textBucket = 'textstorage-northcoders';
 const rawAudioBucket = 'rawaudiostorage-northcoders';
@@ -15,7 +20,7 @@ s3Router.put(`/textstorage`, (req, res) => {
 	console.log(id, 'id')
 	const params = {
 		Bucket: textBucket,
-		Key: id + '.txt',
+		Key: `q${id}.txt`,
 		Body: questionText
 	}
 
