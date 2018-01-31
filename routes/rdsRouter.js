@@ -91,7 +91,7 @@ rdsRouter.put('/answers', (req, res) => {
 			return result;
 		})
 		.then(data => {
-			res.status(201).send()
+			res.status(201).json({ answerId: data.insertId })
 		})
 		.catch(err => console.log(err));
 })

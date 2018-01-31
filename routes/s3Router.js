@@ -15,20 +15,20 @@ const mysql = require('promise-mysql');
 const SQL = require('sql-template-strings');
 
 s3Router.put(`/textstorage`, (req, res) => {
-	console.log(req.body,'HERE IS THE REQ.BODy')
-	const { id, questionText } = req.body;
+	console.log(req.body, 'HERE IS THE REQ.BODy')
+	const { data, id, type } = req.body;
 	console.log(id, 'id')
 	const params = {
 		Bucket: textBucket,
-		Key: `q${id}.txt`,
-		Body: questionText
+		Key: `${type}${id}.txt`,
+		Body: data
 	}
 
 	s3.putObject(params, (err, data) => {
 		if (err) console.log(err)
 		else {
 			console.log(data, 'success')
-			res.status(201).json({question: data});
+			res.status(201).json({ data });
 		}
 	})
 })
@@ -50,6 +50,39 @@ s3Router.get('/textstorage', (req, res) => {
 		.catch((err) => {
 			console.log(err)
 		})
+})
+
+s3Router.get('/sign', (req, res) => {
+	const id = req.query.objectName;
+	const prefix = req.query.prefix;
+	const mimeType = 'audio/webm';
+	const ext = '.webm';
+	const fileKey = `${prefix}${id}${ext}`;
+
+	const params = {
+		Bucket: rawAudioBucket,
+		Key: fileKey,
+		Expires: 6000,
+		ContentType: mimeType,
+		ACL: 'public-read' // || 'private'
+	};
+
+	console.log('Get signed url params', params)
+
+	// Getting pre-signed url - no actual data is being passed here
+	s3.getSignedUrl('putObject', params, function (err, url) {
+		if (err) {
+			console.log(err);
+			return res.send(500, "Cannot create S3 signed URL");
+		}
+
+		console.log('url: ', url)
+		res.json({
+			signedUrl: url,
+			publicUrl: 'https://s3.amazonaws.com/' + params.Bucket + '/' + params.Key,
+			filename: id
+		});
+	});
 })
 
 module.exports = s3Router;
