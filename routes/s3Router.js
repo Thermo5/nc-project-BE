@@ -4,8 +4,11 @@ const s3Router = express.Router();
 const aws = require('aws-sdk');
 
 const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, region } = process.env
+console.log(AWS_ACCESS_KEY_ID)
+console.log(AWS_SECRET_ACCESS_KEY)
+console.log(region)
 aws.config.region = region;
-aws.config.credentials = { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY }
+aws.config.credentials = { accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY}
 
 const s3 = new aws.S3();
 const textBucket = 'textstorage-northcoders';
