@@ -8,9 +8,9 @@ const rawAudioBucket = 'rawaudiostorage-northcoders';
 const mp3AudioBucket = 'mp3audiostorage-northcoders';
 const aws = require('aws-sdk');
 
-const { accessKeyId, secretAccessKey, region } = require('../config')
+const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, region } = process.env
 aws.config.region = region;
-aws.config.credentials = { accessKeyId, secretAccessKey }
+aws.config.credentials = { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY }
 
 const s3 = new aws.S3();
 const mysql = require('promise-mysql');
