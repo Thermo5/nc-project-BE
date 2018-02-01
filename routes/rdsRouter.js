@@ -46,7 +46,7 @@ rdsRouter.put('/users', (req, res) => {
 
 //
 rdsRouter.put('/questions', (req, res) => {
-	const { user_id, topic, keywords, answered} = req.body;
+	const { user_id, topic, keywords} = req.body;
 	console.log(req.body);
 
 	mysql.createConnection({
@@ -59,8 +59,8 @@ rdsRouter.put('/questions', (req, res) => {
 		.then(connection => {
 			const qry = SQL`
             INSERT 
-            INTO questions (user_id, topic, keywords, answered) 
-            VALUES (${user_id}, ${topic}, ${keywords},  ${answered})`;
+            INTO questions (user_id, topic, keywords) 
+            VALUES (${user_id}, ${topic}, ${keywords})`;
 			const result = connection.query(qry)
 			connection.end();
 			return result;
@@ -192,6 +192,26 @@ rdsRouter.get('/questions/:question_id/answers', (req, res) => {
 		})
 		.then(answers => {
 			res.json({ answers });
+		})
+		.catch(err => console.log(err));
+})
+
+rdsRouter.get('/answers/:user_id', (req, res) => {
+	const id = req.params.user_id;
+	mysql.createConnection({
+		host: process.env.host,
+		port: process.env.port,
+		user: process.env.user,
+		password: process.env.password,
+		database: process.env.database
+	})
+		.then(connection => {
+			const questions = connection.query(SQL`SELECT questions.id, questions.user_id, topic, keywords, answered, questions.time_stamp, questions.raw_audio_in_bucket, questions.mp3_in_bucket, questions.text_in_bucket FROM questions JOIN answers ON questions.id=answers.question_id WHERE answers.user_id = ${id}`)
+			connection.end();
+			return questions;
+		})
+		.then(questions => {
+			res.json({ questions });
 		})
 		.catch(err => console.log(err));
 })
