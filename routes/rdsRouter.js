@@ -46,7 +46,7 @@ rdsRouter.put('/users', (req, res) => {
 
 //
 rdsRouter.put('/questions', (req, res) => {
-	const { user_id, topic, keywords} = req.body;
+	const { user_id, topic, keywords } = req.body;
 	console.log(req.body);
 
 	mysql.createConnection({
@@ -131,7 +131,7 @@ rdsRouter.get('/users/:user_id', (req, res) => {
 		})
 		.then(userArr => {
 			const user = userArr[0]
-			res.json( user );
+			res.json(user);
 		})
 		.catch(err => console.log(err));
 })
@@ -212,6 +212,28 @@ rdsRouter.get('/answers/:user_id', (req, res) => {
 		})
 		.then(questions => {
 			res.json({ questions });
+		})
+		.catch(err => console.log(err));
+})
+
+// add new endpoint to return back a single answer for a given answer id
+rdsRouter.get('/answers', (req, res) => {
+	const { answerId } = req.query;
+
+	mysql.createConnection({
+		host: process.env.host,
+		port: process.env.port,
+		user: process.env.user,
+		password: process.env.password,
+		database: process.env.database
+	})
+		.then(connection => {
+			const answer = connection.query(SQL`SELECT * FROM answers WHERE id = ${answerId}`)
+			connection.end();
+			return answer;
+		})
+		.then(answer => {
+			res.json({ answer: answer[0] });
 		})
 		.catch(err => console.log(err));
 })
