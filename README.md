@@ -22,7 +22,7 @@ GET /rds/answers/:user_id
 GET /rds/answers?answerId=<answer id>
 
 PUT /rds/users
-  body: { <user details> }
+  body: { first_name, surname, answerer, questioner, region, email, user_password, gender, dob, occupation }
 
 PUT /rds/questions
   body: { user_id, topic, keywords }
